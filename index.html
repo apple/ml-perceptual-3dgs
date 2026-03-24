@@ -1,0 +1,429 @@
+<!--
+Copyright (C) 2026 Apple Inc. All Rights Reserved.
+
+IMPORTANT:  This Apple software is supplied to you by Apple
+Inc. ("Apple") in consideration of your agreement to the following
+terms, and your use, installation, modification or redistribution of
+this Apple software constitutes acceptance of these terms.  If you do
+not agree with these terms, please do not use, install, modify or
+redistribute this Apple software.
+
+In consideration of your agreement to abide by the following terms, and
+subject to these terms, Apple grants you a personal, non-exclusive
+license, under Apple's copyrights in this original Apple software (the
+"Apple Software"), to use, reproduce, modify and redistribute the Apple
+Software, with or without modifications, in source and/or binary forms;
+provided that if you redistribute the Apple Software in its entirety and
+without modifications, you must retain this notice and the following
+text and disclaimers in all such redistributions of the Apple Software.
+Neither the name, trademarks, service marks or logos of Apple Inc. may
+be used to endorse or promote products derived from the Apple Software
+without specific prior written permission from Apple.  Except as
+expressly stated in this notice, no other rights or licenses, express or
+implied, are granted by Apple herein, including but not limited to any
+patent rights that may be infringed by your derivative works or by other
+works in which the Apple Software may be incorporated.
+
+The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
+MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
+OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
+
+IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
+MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
+AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
+STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Drop-In Perceptual Optimization for 3D Gaussian Splatting">
+
+    <title>Drop-In Perceptual Optimization for 3D Gaussian Splatting</title>
+
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container fade-in">
+            <h1>Drop-In Perceptual<br>Optimization of 3D Gaussian Splatting</h1>
+            <nav>
+                <ul class="links">
+                    <li>
+                        <img src="assets/arxiv-icon.svg" style="width: 15px;" />
+                        <a href="#" target="_blank">arXiv</a>
+                    </li>
+                    <li>
+                        <img src="assets/reconstructions-icon.svg" style="width: 15px;" />
+                        <a href="https://ml-site.cdn-apple.com/datasets/perceptual-3dgs/perceptual_3dgs.zip" download>Data</a>
+                    </li>
+                    <li>
+                        <img src="assets/github-icon.svg" style="width: 15px;" />
+                        <a href="#citation">BibTeX</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+    <section class="sub-header fade-in">
+        <div class="container">
+            <nav>
+                <ul class="links">
+                    <li><a href="mailto:e_ozyilkan@apple.com">Ezgi Ozyilkan<sup>*◊†‡</sup></a></li>
+                    <li><a href="mailto:zhiqichen@apple.com">Zhiqi Chen<sup>*◊</sup></a></li>
+                    <li><a href="mailto:oren.rippel@apple.com">Oren Rippel<sup>◊</sup></a></li>
+                    <li><a href="mailto:jona.balle@nyu.edu">Jona Ballé<sup>†</sup></a></li>
+                    <li><a href="mailto:kedar.tatwawadi@apple.com">Kedar Tatwawadi<sup>◊</sup></a></li>
+                </ul>
+            </nav>
+            <div style="margin-top: 10px;">
+                <p><sup>*</sup>Equal contribution &nbsp;&nbsp;&nbsp; <sup>◊</sup>Apple &nbsp;&nbsp;&nbsp; <sup>†</sup>Tandon School of Engineering, New York University</p>
+                <p style="font-size: 0.85em; font-style: italic; margin-top: 8px;"><sup>‡</sup>Work done during an internship at Apple</p>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <div class="container fade-in" style="padding-top: 20px;">
+            <h2><a href="index.html#about" id="about">About</a></h2>
+            <p>
+                3D Gaussian Splatting (3DGS) models are typically trained with linear combinations of pixel-level distortion metrics, which can result in blurry renderings.
+                To address this, we explore perceptual optimization of 3DGS, comparing three types of alternative distortion losses: the ubiquitous L1+SSIM loss used in the original 3DGS work, a composite loss consisting of several popular perceptual image metrics, as well as Wasserstein Distortion (WD), a recently proposed distortion metric based on local texture statistics.
+                We conduct <strong>the first large-scale human subjective study on 3DGS</strong>, involving 39,320 pairwise ratings from 428 participants across novel views rendered from indoor and outdoor scenes. A regularized version of WD (which we call WD-R) emerges as the clear winner, excelling at recovering fine textures without incurring a higher splat count.
+                <strong>WD-R is preferred by raters more than 2.3&times; over the original 3DGS loss, and 1.5&times; over the current state-of-the-art on perceptual metrics.</strong>
+                We further demonstrate that WD-R serves as a drop-in replacement that generalizes across 3DGS frameworks: when applied to Mip-Splatting, WD-R is preferred 1.8&times; over its default loss, and when applied to Scaffold-GS, it is preferred 3.6&times;.
+                In that regard, WD-R also consistently achieves state-of-the-art LPIPS, DISTS, and FID scores across various datasets.
+                We find that this also carries over to the task of 3DGS scene compression, with &asymp;50% bitrate savings for comparable perceptual metric performance.
+            </p>
+
+            <!-- Scene Thumbnails -->
+            <div class="image-selector">
+                <div id="scene-thumbnails" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;"></div>
+            </div>
+
+            <!-- Comparison Slider Container -->
+            <div class="comparison-slider-wrapper outlined">
+                <!-- Main Slider -->
+                <div class="comparison-slider noselect">
+                    <div id="right-imgs">
+                        <img id="comparison-right-img" alt="Right comparison" style="width: 100%; height: auto; display: block;">
+                    </div>
+                    <div class="resize" id="left-img">
+                        <img id="comparison-left-img" alt="Left comparison" style="display: block;">
+                    </div>
+                    <div class="left-selector">
+                        <div class="btn-group-vertical">
+                            <button type="button" class="btn btn-sm btn-dark disabled-button highlighted" disabled><span>WD-R (Ours)</span></button>
+                        </div>
+                    </div>
+                    <div class="right-selector">
+                        <div class="btn-group-vertical" id="right-method-tabs">
+                            <!-- Method tabs will be generated here by JS -->
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                </div>
+            </div>
+
+            <figcaption style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9em; font-style: italic;">
+                Interactive comparison across different scenes. WD-R (Ours) is fixed on the left. Select a scene and comparison method from the top-right overlay buttons, then drag the slider to compare.
+            </figcaption>
+
+            <style>
+                .noselect {
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                }
+                .outlined {
+                    position: relative;
+                    width: 100%;
+                    max-width: 90%;
+                    margin: 10px auto;
+                    background-color: white;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+                    border-radius: 16px;
+                    overflow: hidden;
+                }
+                .comparison-slider-wrapper .comparison-slider {
+                    position: relative;
+                    width: 100%;
+                    margin: 0;
+                    border: 5px white solid;
+                    box-sizing: border-box;
+                }
+                .comparison-slider-wrapper .comparison-slider #right-imgs > img {
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                }
+                .comparison-slider-wrapper .comparison-slider .resize {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    width: 50%;
+                    overflow: hidden;
+                }
+                .comparison-slider-wrapper .comparison-slider .resize > img {
+                    display: block;
+                    width: auto;
+                    height: 100%;
+                }
+                .comparison-slider-wrapper .comparison-slider .divider {
+                    position: absolute;
+                    width: 3px;
+                    height: 100%;
+                    background-color: rgba(255, 255, 255, 0.9);
+                    left: 50%;
+                    top: 0;
+                    bottom: 0;
+                    margin-left: -1.5px;
+                    cursor: ew-resize;
+                    z-index: 10;
+                    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+                }
+                .comparison-slider-wrapper .comparison-slider .divider:before {
+                    content: "";
+                    position: absolute;
+                    width: 36px;
+                    height: 36px;
+                    left: -16.5px;
+                    top: 50%;
+                    margin-top: -18px;
+                    background: white;
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cpath d='M12 18 L7 23 L7 13 Z M24 18 L29 13 L29 23 Z' fill='%231d1d1f'/%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-position: center center;
+                    border-radius: 50%;
+                    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+                    transition: all 0.2s ease;
+                }
+                .comparison-slider-wrapper .comparison-slider .divider:hover:before {
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+                }
+                .left-selector {
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                }
+                .right-selector {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                }
+                .btn-group-vertical {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                }
+                .btn {
+                    padding: 8px 16px;
+                    border: 2px solid transparent;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    cursor: pointer;
+                    text-align: center;
+                    white-space: nowrap;
+                    transition: all 0.2s ease;
+                    min-width: 110px;
+                }
+                .btn-dark {
+                    background-color: #343a40;
+                    color: white;
+                }
+                .btn-light {
+                    background-color: #f8f9fa;
+                    color: #333;
+                }
+                .btn.disabled-button:disabled {
+                    background-color: #171a1d;
+                    opacity: 100%;
+                    cursor: default;
+                }
+                .btn.disabled-button.highlighted:disabled {
+                    border: 2px white solid;
+                }
+                .method-tab {
+                    padding: 8px 16px;
+                    background: #f5f5f7;
+                    border: 2px solid transparent;
+                    cursor: pointer;
+                    font-size: 13px;
+                    transition: all 0.2s ease;
+                    color: #1d1d1f;
+                    text-align: center;
+                    border-radius: 8px;
+                    min-width: 110px;
+                    white-space: nowrap;
+                }
+                .method-tab:hover {
+                    background: #e8e8ed;
+                    transform: translateY(-1px);
+                    border: 2px solid transparent;
+                }
+                .method-tab.reference-tab {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    border: 2px solid transparent;
+                }
+                .method-tab.reference-tab:hover {
+                    background: linear-gradient(135deg, #5568d3 0%, #65408b 100%);
+                    transform: translateY(-1px);
+                    border: 2px solid transparent;
+                }
+                .method-tab.active {
+                    background: #1d1d1f;
+                    color: white;
+                    font-weight: 500;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                    border: 2px solid white;
+                }
+                .method-tab.reference-tab.active {
+                    background: linear-gradient(135deg, #4a5dc7 0%, #553979 100%);
+                    color: white;
+                    box-shadow: 0 2px 12px rgba(102, 126, 234, 0.4);
+                    border: 2px solid white;
+                }
+                .method-tab.active:hover {
+                    border: 2px solid white;
+                }
+                .scene-thumb {
+                    cursor: pointer;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    border: 3px solid transparent;
+                    transition: all 0.2s ease;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                }
+                .scene-thumb:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+                .scene-thumb.thumb-active {
+                    border-color: #667eea;
+                    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+                }
+                .scene-thumb img {
+                    display: block;
+                    width: 100px;
+                }
+                .scene-label {
+                    text-align: center;
+                    font-size: 12px;
+                    color: #1d1d1f;
+                    font-weight: 500;
+                    padding: 4px 0;
+                    background: white;
+                }
+                .comparison-slider.zoomed {
+                    cursor: move;
+                    overflow: hidden;
+                }
+                #comparison-left-img,
+                #comparison-right-img {
+                    transition: none;
+                    transform-origin: 0 0;
+                }
+            </style>
+        </div>
+
+        <div class="container fade-in">
+            <h2><a href="index.html#human-preference-study" id="human-preference-study">Human Preference Study</a></h2>
+            <p>
+                We report human preference results for indoor and outdoor scene datasets separately, and also for all scenes combined.
+                The methods considered include WD, WD-R, PerceptualGS, PixelGS, and the original 3DGS loss. We exclude the composite
+                loss from the human preference study, as it incurs a significantly higher number of splats for most datasets, making
+                the comparison unfair.
+            </p>
+            <p>
+                As shown in the figure below, WD-R achieves significantly better Elo scores across all scenes. The difference in Elo
+                of more than 150 as compared with the original loss suggests that the WD-R reconstructions were chosen by raters 2.3&times;
+                as often. Compared with the state-of-the-art method, PerceptualGS, both WD and WD-R achieve better Elo scores (within
+                the 95% error margin). Specifically, WD-R was preferred more than 1.5&times; over PerceptualGS (as suggested by Elo difference of 72).
+            </p>
+
+            <img src="assets/elo_comparison.png" style="width: 100%; max-width: 800px; height: auto; display: block; margin: 10px auto;" alt="ELO comparison showing human preference ratings" />
+            <figcaption style="text-align: center; margin-top: 10px; color: #666; font-size: 0.95em;">
+                Large-scale human evaluation with 39,320 pairwise ratings from 428 participants across 3 frameworks. WD-R achieves the highest preference ratings across both indoor and outdoor scenes.
+            </figcaption>
+
+            <h3>Generalization to Other 3DGS Frameworks</h3>
+            <p>
+                To demonstrate that WD-R serves as a drop-in perceptual loss, we conduct additional human preference studies
+                with Mip-Splatting and Scaffold-GS. For Mip-Splatting, WD-R achieves an Elo difference of 105.7 over the default loss
+                (4,880 pairwise votes from 86 participants), meaning WD-R is preferred 1.8&times; as often. For Scaffold-GS, WD-R achieves
+                an Elo difference of 223.2 over the default loss (3,720 pairwise votes from 93 participants), meaning WD-R is preferred 3.6&times; as often.
+            </p>
+
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 20px auto;">
+                <div style="flex: 1; min-width: 300px; max-width: 500px;">
+                    <img src="assets/elo_mipsplatting.png" style="width: 100%; height: auto; display: block;" alt="Elo comparison for Mip-Splatting" />
+                    <figcaption style="text-align: center; margin-top: 8px; color: #666; font-size: 0.9em;">
+                        Human preference Elo ratings for Mip-Splatting. WD-R is preferred 1.8&times; over the default loss.
+                    </figcaption>
+                </div>
+                <div style="flex: 1; min-width: 300px; max-width: 500px;">
+                    <img src="assets/elo_scaffoldgs.png" style="width: 100%; height: auto; display: block;" alt="Elo comparison for Scaffold-GS" />
+                    <figcaption style="text-align: center; margin-top: 8px; color: #666; font-size: 0.9em;">
+                        Human preference Elo ratings for Scaffold-GS. WD-R is preferred 3.6&times; over the default loss.
+                    </figcaption>
+                </div>
+            </div>
+
+            <p>
+                Overall, across all three frameworks (3DGS, Mip-Splatting, Scaffold-GS), WD-R is consistently preferred by participants
+                over all other methods, totaling 39,320 pairwise ratings from 428 participants. These results confirm that WD-based
+                optimization produces the most perceptually appealing rendered novel views for both indoor and outdoor scenes, and
+                generalizes across different 3DGS architectures.
+            </p>
+        </div>
+
+        <div class="container fade-in">
+            <img src="assets/teaser.png" style="width: 100%; max-width: 1200px; height: auto; display: block; margin: 10px auto;" alt="Teaser figure showing comparison of different loss functions" />
+            <figcaption style="text-align: center; margin-top: 10px; color: #666; font-size: 0.95em;">
+                Novel view rendering using 3DGS on the Barcelona scene from the BungeeNeRF dataset. We compare the original 3DGS loss (L1+SSIM),
+                PixelGS, and PerceptualGS to our Wasserstein Distortion (WD) and WD-Regularized (WD-R) losses. Green bars show human preference ratios.
+            </figcaption>
+        </div>
+
+        <div class="container fade-in">
+            <h2><a href="index.html#citation" id="citation">Citation</a></h2>
+            <p>If you find our work useful, please cite:</p>
+            <pre style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto;">
+@article{ozyilkan2026beyond,
+  title={Drop-In Perceptual Optimization of 3D Gaussian Splatting},
+  author={Ozyilkan, Ezgi and Chen, Zhiqi and Rippel, Oren and Ball{\'e}, Jona and Tatwawadi, Kedar},
+  year={2026}
+}</pre>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <copy>
+                Copyright © <span class="footer-year"></span> Apple Inc. All rights reserved.
+            </copy>
+        </div>
+    </footer>
+
+    <script src="assets/script.js" defer></script>
+    <script src="assets/comparison-slider.js" defer></script>
+</body>
+
+</html>
