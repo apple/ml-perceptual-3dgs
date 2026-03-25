@@ -1,6 +1,6 @@
 # Drop-In Perceptual Optimization of 3D Gaussian Splatting
 
-This repository accompanies the research paper [**"Drop-In Perceptual Optimization of 3D Gaussian Splatting"**](#) (arxiv link to be added when published).
+This repository accompanies the research paper [**"Drop-In Perceptual Optimization of 3D Gaussian Splatting"**](#) (https://arxiv.org/abs/2603.23297).
 
 **Authors:** Ezgi Ozyilkan<sup>1,2,\*,‡</sup>, Zhiqi Chen<sup>1,\*</sup>, Oren Rippel<sup>1</sup>, Jona Ballé<sup>2</sup>, Kedar Tatwawadi<sup>1</sup>
 
