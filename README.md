@@ -56,7 +56,7 @@ Overall, across all three frameworks (3DGS, Mip-Splatting, Scaffold-GS), WD-R is
 
 ## Interactive Viewer
 
-Visit our [project page](https://pages.github.com/apple/ml-perceptual-3dgs/) for an interactive comparison tool that allows you to:
+Visit our [project page](https://apple.github.io/ml-perceptual-3dgs/) for an interactive comparison tool that allows you to:
 
 - Compare WD-R against other methods side-by-side
 - Use an interactive slider for detailed visual comparisons
