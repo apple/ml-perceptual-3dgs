@@ -99,9 +99,10 @@ This project is licensed under the following license:
 If you find our work useful, please cite:
 
 ```bibtex
-@article{ozyilkan2026beyond,
-  title={Drop-In Perceptual Optimization of 3D Gaussian Splatting},
-  author={Ozyilkan, Ezgi and Chen, Zhiqi and Rippel, Oren and Ball{\'e}, Jona and Tatwawadi, Kedar},
-  year={2026}
+@article{drop-in,
+title = {Drop-In Perceptual Optimization for 3D Gaussian Splatting},
+author = {Ezgi Özyılkan and Zhiqi Chen and Oren Rippel and Jona Ballé and Kedar Tatwawadi},
+year = {2026},
+URL = {https://arxiv.org/abs/2603.23297}
 }
 ```
